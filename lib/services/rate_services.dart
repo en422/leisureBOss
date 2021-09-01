@@ -1,4 +1,4 @@
-import 'package:leisurelounge/services/content_service.dart';
+import '../services/services.dart';
 
 import '../models/models.dart';
 import 'dart:io';

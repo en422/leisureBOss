@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:leisurelounge/models/like_model.dart';
+import '../models/models.dart';
 import '../utils/utils.dart';
 
 class ListModel {
