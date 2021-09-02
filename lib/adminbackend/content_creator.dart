@@ -11,7 +11,10 @@ class ContentCreator {
   late File contentFile;
   bool status = false;
 
-  ContentCreator({required this.content});
+  ContentCreator(
+      {required this.content,
+      required this.imageFile,
+      required this.contentFile});
 
   Future<bool> createContentWithFile() async {
     print("in create content with file");
