@@ -1,20 +1,24 @@
 import 'package:offline/widgets/datePicker/button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:offline/widgets/datePicker/date_provider.dart';
+import 'package:provider/provider.dart';
 
 class DatePickerWidget extends StatefulWidget {
+   DateTime date = DateTime.now();
+
   @override
   _DatePickerWidgetState createState() => _DatePickerWidgetState();
 }
 
 class _DatePickerWidgetState extends State<DatePickerWidget> {
-   DateTime date = DateTime.now();
+   
 
   String getText() {
-    if (date == null) {
+    if (widget.date == null) {
       return 'Select Date';
     } else {
-      return DateFormat('dd/MM/yyyy').format(date);
+      return DateFormat('dd/MM/yyyy').format(widget.date);
     }
   }
 
@@ -27,15 +31,20 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
 
   Future pickDate(BuildContext context) async {
     final initialDate = DateTime.now();
+    UploadDetail detail = Provider.of<UploadDetail>(context);
     final newDate = await showDatePicker(
       context: context,
-      initialDate: date,
+      initialDate: widget.date,
       firstDate: DateTime(DateTime.now().year - 150),
       lastDate: DateTime(DateTime.now().year + 100),
     );
 
     if (newDate == null) return;
 
-    setState(() => date = newDate);
+    setState(() { 
+      widget.date = newDate;
+      detail.setdatetime = (widget.date);
+      });
   }
+  
 }

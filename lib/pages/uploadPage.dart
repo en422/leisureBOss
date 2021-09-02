@@ -3,6 +3,7 @@ import 'package:offline/navigationDrawer/navigationDrawer.dart';
 import 'package:offline/navigationDrawer/responsive.dart';
 import 'package:offline/routes/pageRoute.dart';
 import 'package:offline/widgets/datePicker/date_picker_widget.dart';
+import 'package:offline/widgets/datePicker/date_provider.dart';
 import 'package:offline/widgets/dropZone/DropZoneWidget.dart';
 //import 'package:offline/widgets/dropZone/DroppedFileWidget.dart';
 import 'package:offline/widgets/dropZone/File_Data_Model.dart';
@@ -42,9 +43,11 @@ class _UploadState extends State<Upload> {
 
   set file(file_Data_Model file) {}
   TextEditingController name = TextEditingController();
+  TextEditingController description = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    UploadDetail detail = Provider.of<UploadDetail>(context);
     //var file;
     return new Scaffold(
       key: context.read<MenuController>().scaffoldKey,
@@ -112,6 +115,7 @@ class _UploadState extends State<Upload> {
                         setState(() {
                           rating = newValue!;
                         });
+                        
                       },
                     ),
                   ],
@@ -128,8 +132,8 @@ class _UploadState extends State<Upload> {
                       alignment: Alignment.centerLeft,
                       height: 100,
                       width: 300,
-                      child: DatePickerWidget())
-                ],
+                      child: DatePickerWidget(),
+                  )],
               ),
             ),
             Padding(
@@ -158,6 +162,7 @@ class _UploadState extends State<Upload> {
                         setState(() {
                           typevalue = newValue!;
                         });
+                        
                       },
                     ),
                   ],
@@ -188,6 +193,7 @@ class _UploadState extends State<Upload> {
                       setState(() {
                         genrevalue = newValue!;
                       });
+                      
                     },
                   ),
                 ],
@@ -204,6 +210,7 @@ class _UploadState extends State<Upload> {
                   border: OutlineInputBorder(),
                   labelText: 'Description',
                 ),
+                controller: description,
               ),
             ),
             Padding(
@@ -216,10 +223,17 @@ class _UploadState extends State<Upload> {
                     child: Text('Upload'),
                     onPressed: () {
                       //******************************************************************** */
-                      if (formKey.currentState!.validate()) {
+                      print("File name: "+name.text);
+                      print("Rating: "+rating.toString());
+                      print("File type: "+typevalue.toString());
+                      print("Genre: "+genrevalue.toString());
+                      
+                      print("date: "+detail.getdatetime.toString());
+                      print("Description: "+description.text);
+                      /*if (formKey.currentState!.validate()) {
                         Navigator.pushReplacementNamed(
                             context, PageRoutes.user);
-                      }
+                      }*/
                     },
                   ),
                 ])),
