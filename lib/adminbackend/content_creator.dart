@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
 import '../utils/utils.dart';
 import '../models/models.dart';
@@ -7,8 +8,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class ContentCreator {
   late ContentModel content;
-  late File imageFile;
-  late File contentFile;
+  late PlatformFile imageFile;
+  late PlatformFile contentFile;
   bool status = false;
 
   ContentCreator(

@@ -1,15 +1,21 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:offline/adminbackend/content_creator.dart';
 import 'package:offline/navigationDrawer/navigationDrawer.dart';
 import 'package:offline/navigationDrawer/responsive.dart';
-import 'package:offline/routes/pageRoute.dart';
+//import 'package:offline/routes/pageRoute.dart';
 import 'package:offline/widgets/datePicker/date_picker_widget.dart';
-import 'package:offline/widgets/datePicker/date_provider.dart';
-import 'package:offline/widgets/dropZone/DropZoneWidget.dart';
+import 'package:offline/widgets/datePicker/upload_provider.dart';
+import 'package:offline/widgets/fileselecter/DropZoneImage.dart';
+import 'package:offline/widgets/fileselecter/DropZoneVideo.dart';
 //import 'package:offline/widgets/dropZone/DroppedFileWidget.dart';
-import 'package:offline/widgets/dropZone/File_Data_Model.dart';
+import 'package:offline/widgets/fileselecter/File_Data_Model.dart';
 import 'package:provider/provider.dart';
 import 'package:offline/navigationDrawer/MenuController.dart';
 import 'package:offline/pages/header.dart';
+import '../models/models.dart';
+import '../adminbackend/content_creator.dart';
 
 import '../constants.dart';
 
@@ -39,11 +45,42 @@ class _UploadState extends State<Upload> {
   ];
   var type = ['Movie', 'Music'];
   var rate = ['0', '1', '2', '3', '4', '5'];
+
+  @override
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<PlatformFile>? _paths;
+  String? _extension;
+  bool _multiPick = true;
+  FileType _pickingType = FileType.media;
+  TextEditingController _controller = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   set file(file_Data_Model file) {}
   TextEditingController name = TextEditingController();
   TextEditingController description = TextEditingController();
+
+
+void initState() {
+    super.initState();
+    _controller.addListener(() => _extension = _controller.text);
+  }
+
+  void _openFileExplorer() async {
+    try {
+      _paths = (await FilePicker.platform.pickFiles(
+        type: _pickingType,
+        allowMultiple: _multiPick,
+        allowedExtensions: (_extension?.isNotEmpty ?? false)
+            ? _extension?.replaceAll(' ', '').split(',')
+            : null,
+      ))
+          ?.files;
+    } on PlatformException catch (e) {
+      print("Unsupported operation" + e.toString());
+    } catch (ex) {
+      print(ex);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,13 +99,26 @@ class _UploadState extends State<Upload> {
         child: Column(
           children: <Widget>[
             //container for the file drop widget
-            Container(
-              height: 300,
-              child: DropZoneWidget(
-                onDroppedFile: (file) => setState(() => this.file = file),
-              ),
+            
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  height: 300,
+                  child: DropZoneVideo(
+                    onDroppedFile: (file) => setState(() => this.file = file),
+                  ),
+                ),
+                SizedBox(width: 25),
+                Container(
+                  height: 300,
+                  child: DropZoneImage(
+                    onDroppedFile: (file) => setState(() => this.file = file),
+                  )
+                )
+              ],
             ),
-            SizedBox(height: 15),
+            //SizedBox(height: 15),
             //DroppedFileWidget(file:file ),
             //the textformfield for the filename
 
@@ -230,6 +280,8 @@ class _UploadState extends State<Upload> {
                       
                       print("date: "+detail.getdatetime.toString());
                       print("Description: "+description.text);
+                      ContentModel contentModel = ContentModel(title: "title", type: ContentType.movie, genre: Genre.action, description: "description", releaseYear: DateTime.now());
+                      ContentCreator creator = ContentCreator(content: contentModel, imageFile: detail.getImageFile, contentFile: detail.getContetFile);
                       /*if (formKey.currentState!.validate()) {
                         Navigator.pushReplacementNamed(
                             context, PageRoutes.user);

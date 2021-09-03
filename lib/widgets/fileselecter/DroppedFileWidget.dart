@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:offline/widgets/dropZone/File_Data_Model.dart';
+import 'package:offline/widgets/fileselecter/File_Data_Model.dart';
 
 class DroppedFileWidget extends StatelessWidget {
 

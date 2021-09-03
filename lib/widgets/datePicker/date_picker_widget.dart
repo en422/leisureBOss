@@ -1,7 +1,7 @@
 import 'package:offline/widgets/datePicker/button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:offline/widgets/datePicker/date_provider.dart';
+import 'package:offline/widgets/datePicker/upload_provider.dart';
 import 'package:provider/provider.dart';
 
 class DatePickerWidget extends StatefulWidget {

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:offline/pages/loginPage.dart';
-import 'package:offline/widgets/datePicker/date_picker_widget.dart';
-import 'package:offline/widgets/datePicker/date_provider.dart';
+//import 'package:offline/pages/loginPage.dart';
+//import 'package:offline/widgets/datePicker/date_picker_widget.dart';
+//import 'package:offline/widgets/datePicker/filePicker.dart';
+import 'package:offline/widgets/datePicker/upload_provider.dart';
 import 'package:offline/widgets/login_text.dart';
 import 'package:offline/pages/uploadPage.dart';
 import 'package:offline/pages/userPage.dart';

@@ -1,23 +1,69 @@
-import 'package:offline/widgets/dropZone/File_Data_Model.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
+import 'package:offline/widgets/datePicker/upload_provider.dart';
+import 'package:offline/widgets/fileselecter/File_Data_Model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:provider/provider.dart';
 
-class DropZoneWidget extends StatefulWidget {
+class DropZoneImage extends StatefulWidget {
   final ValueChanged<file_Data_Model> onDroppedFile;
 
-  const DropZoneWidget({Key? key, required this.onDroppedFile})
+  const DropZoneImage({Key? key, required this.onDroppedFile})
       : super(key: key);
   @override
-  _DropZoneWidgetState createState() => _DropZoneWidgetState();
+  _DropZoneImageState createState() => _DropZoneImageState();
 }
 
-class _DropZoneWidgetState extends State<DropZoneWidget> {
+class _DropZoneImageState extends State<DropZoneImage> {
   //controller to hold data of file dropped by user
   late DropzoneViewController controller;
   // a variable just to update UI color when user hover or leave the drop zone
   bool highlight = false;
+
+@override
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<PlatformFile>? _paths;
+  String? _extension;
+  bool _multiPick = true;
+  FileType _pickingType = FileType.image;
+  TextEditingController _controller = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  set file(file_Data_Model file) {}
+  TextEditingController name = TextEditingController();
+  TextEditingController description = TextEditingController();
+
+
+void initState() {
+    super.initState();
+    _controller.addListener(() => _extension = _controller.text);
+  }
+
+  void _openFileExplorer() async {
+    try {
+      _paths = (await FilePicker.platform.pickFiles(
+        type: _pickingType,
+        allowMultiple: _multiPick,
+        allowedExtensions: (_extension?.isNotEmpty ?? false)
+            ? _extension?.replaceAll(' ', '').split(',')
+            : null,
+      ))
+          ?.files;
+          UploadDetail detail = Provider.of<UploadDetail>(context);
+          setState(() {
+            detail.setImageFile = _paths!.first;
+          });
+          
+    } on PlatformException catch (e) {
+      print("Unsupported operation" + e.toString());
+    } catch (ex) {
+      print(ex);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,34 +88,29 @@ class _DropZoneWidgetState extends State<DropZoneWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.cloud_upload_outlined,
+                Icons.image_outlined,
                 size: 80,
                 color: Colors.white,
               ),
               Text(
-                'Drop Files Here',
+                'Drop Image Files Here',
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
               const SizedBox(
-                height: 16,
+                height: 16
               ),
               // a button to pickfile from computer
-              ElevatedButton.icon(
-                onPressed: () async {
-                  final events = await controller.pickFiles();
-                  if (events.isEmpty) return;
-                  uploadedFile(events.first);
-                },
-                icon: Icon(Icons.search),
-                label: Text(
-                  'Choose File',
-                  style: TextStyle(color: Colors.white, fontSize: 15),
+              Padding(
+                  padding: const EdgeInsets.only(top: 50.0, bottom: 20.0),
+                  child: Column(
+                    children: <Widget>[
+                      ElevatedButton(
+                        onPressed: () => _openFileExplorer(),
+                        child: const Text("Open Image Picker"),
+                      ),
+                    ],
+                  ),
                 ),
-                style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    primary: highlight ? Colors.blue : Colors.green.shade300,
-                    shape: RoundedRectangleBorder()),
-              )
             ],
           ),
         ),
@@ -103,10 +144,12 @@ class _DropZoneWidgetState extends State<DropZoneWidget> {
   }
 
   Widget buildDecoration({required Widget child}) {
-    final colorBackground = highlight ? Colors.blue : Colors.green;
+    final colorBackground = highlight ? Colors.blue : Colors.black;
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: Container(
+        height: 120,
+        width: 300,
         padding: EdgeInsets.all(10),
         child: DottedBorder(
             borderType: BorderType.RRect,
