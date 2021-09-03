@@ -3,11 +3,12 @@ import '../utils/utils.dart';
 import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 
 class FileService {
   late ContentModel content;
-  late File imageFile;
-  late File contentFile;
+  late PlatformFile imageFile;
+  late PlatformFile contentFile;
   String imageFileUrl = "";
   String contentFileUrl = "";
 
@@ -21,7 +22,7 @@ class FileService {
     String newPath = content.id.toString();
     final FileReader imageReader = FileReader();
     try {
-      imageReader.readAsDataUrl(imageFile);
+      imageReader.readAsDataUrl(imageFile as File);
       imageReader.onLoadEnd.listen((event) async {
         print("image file reading completed");
         await firebaseStorage
@@ -36,7 +37,7 @@ class FileService {
             .update({"imageUrl": uri});
       });
       final FileReader contentReader = FileReader();
-      contentReader.readAsDataUrl(contentFile);
+      contentReader.readAsDataUrl(contentFile as File);
       contentReader.onLoadEnd.listen((event) async {
         print("content file reading completed");
         await firebaseStorage
